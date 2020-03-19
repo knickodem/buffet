@@ -7,7 +7,7 @@
 #' @param base base of the logarithm to be used. Default is exp(1), natural. Base 2 and base 10 are also common.
 #' @param ... if x is a vector, further arguments to be passed on to \link[base]{table}.
 #' 
-#' #' @details 
+#' @details 
 #' The Shannon entropy index uses information theory to measure the uncertainty of a random variable.
 #' As the index increases, there is greater uncertainty that a random observation is from a particular group.
 #' Commonly used in ecological contexts, the utility of the index can extend to measure the heterogeneity, or diversity, of human populations.
