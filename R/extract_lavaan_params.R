@@ -40,7 +40,7 @@
 
 extract_lavaan_params <- function(object, std = "no", params = "all", ...){
 
-  if(params == "all"){
+  if("all" %in% params){
 
     params = c("=~", "~~", "~*~", "~1", "~", "|", "<~")
 
