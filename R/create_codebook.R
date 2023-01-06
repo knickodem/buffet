@@ -21,12 +21,14 @@ create_codebook <- function(data,
   ValueLabels <- get_labels(data)
 
   ## Putting in wide format
-  VLW <- ValueLabels %>% mutate(VL = paste(Value, Label, sep = " = ")) %>%
-    group_by(Item) %>% summarize(Value_Label = paste(VL, collapse = "; ")) %>%
+  VLW <- ValueLabels %>%
+    mutate(VL = paste(Value, Label, sep = " = ")) %>%
+    group_by(Item) %>%
+    summarize(Value_Label = paste(VL, collapse = "; ")) %>%
     ungroup()
 
   ## Extract Item Stem (i.e. label), then joining values and labels
-  Stems <- purrr::map(data, ~attr(.,"label")) %>%
+  Stems <- lapply(data, function(x) attr(x,"label")) %>%
     tibble::enframe("Item","Stem")
 
   ## Joining Stems, Values, and Labels (gets us 90% of the way to the final codebook)
@@ -56,9 +58,9 @@ create_codebook <- function(data,
 
 #' Extracting labels from factor and labelled variables
 #'
-#' @param data a \code{data.frame}
+#' @param data a \code{data.frame} with observations in rows and variables in columns
 #'
-#' @return a \code{data.frame}
+#' @return a \code{data.frame} with a row for each value-label pair
 #'
 #' @export
 
@@ -67,21 +69,20 @@ get_labels <- function(data){
   if(sum(sapply(data, haven::is.labelled)) > 0){
 
     ## Select labelled variables, extract labels, and transform to long format dataframe
-    llbls_temp <- data %>% select_if(haven::is.labelled) %>%
-      purrr::map(~attr(.,"labels"))
+    llbls_temp <- lapply(select_if(data, haven::is.labelled), function(x) attr(x,"labels"))
 
     # if values are a mix of numeric and character
     if(length(unique(sapply(llbls_temp, class))) != 1){
 
-      llbls_num <- llbls_temp[sapply(all_labels_temp, class) == "numeric"] %>%
+      llbls_num <- llbls_temp[sapply(llbls_temp, class) == "numeric"] %>%
         tibble::enframe("Item","Value") %>%
-        mutate(Label = purrr::map(Value,~attr(.,"names"))) %>%
+        mutate(Label = lapply(Value, function(x) attr(x,"names"))) %>%
         tidyr::unnest(cols = c(Value, Label)) %>%
         mutate(Value = as.character(Value)) # need to convert to character for combining
 
       llbls <- llbls_temp[sapply(llbls_temp, class) == "character"] %>%
         tibble::enframe("Item","Value") %>%
-        mutate(Label = purrr::map(Value,~attr(.,"names"))) %>%
+        mutate(Label = lapply(Value, function(x) attr(x,"names"))) %>%
         tidyr::unnest(cols = c(Value, Label)) %>%
         bind_rows(llbls_num) %>%
         mutate(Item = factor(Item, levels = names(llbls_temp))) %>%
@@ -89,9 +90,9 @@ get_labels <- function(data){
 
     } else {
 
-      llbls <- all_labels_temp %>%
+      llbls <- llbls_temp %>%
         tibble::enframe("Item","Value") %>%
-        mutate(Label = purrr::map(Value,~attr(.,"names"))) %>%
+        mutate(Label = lapply(Value, function(x) attr(x,"names"))) %>%
         tidyr::unnest(cols = c(Value, Label))
     }
 
@@ -102,16 +103,20 @@ get_labels <- function(data){
   if(sum(sapply(data, is.factor)) > 0){
 
     ## Extract labels and transform to long format dataframe
-    flbls <- data %>% select_if(is.factor) %>%
-      purrr::map(~levels(.)) %>%
+    flbls <- lapply(select_if(data, is.factor), levels) %>%
       tibble::enframe("Item","Label") %>%
-      tidy::unnest(cols = c(Value, Label))
+      mutate(Value = lapply(Label, function(x) 1:length(x))) %>%
+      tidyr::unnest(cols = c(Value, Label))
 
   } else {
     flbls <- NULL
   }
 
   if(!is.null(llbls) & !is.null(flbls)){
+    if(class(llbls$Value) == "character"){
+      flbls$Value <- as.character(flbls$Value)
+    }
+
     all_labels <- bind_rows(llbls, flbls) %>%
       mutate(Item = factor(Item, levels = names(data)) %>%
                forcats::fct_drop()) %>%

@@ -7,10 +7,10 @@
 get_labels(data)
 }
 \arguments{
-\item{data}{a \code{data.frame}}
+\item{data}{a \code{data.frame} with observations in rows and variables in columns}
 }
 \value{
-a \code{data.frame}
+a \code{data.frame} with a row for each value-label pair
 }
 \description{
 Extracting labels from factor and labelled variables
