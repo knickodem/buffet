@@ -1,11 +1,11 @@
 #' Calculate scale score
 #'
-#' Combine item responses into a scale score using a sum, mean, or count
+#' Combine item responses into a scale score
 #'
 #' @param data a \code{data.frame}
 #' @param items character vector of column names in \code{data} to use in the scale
-#' @param type should the score be the sum or the mean of item responses?
-#' @param min.valid the minimum number of valid responses to receive a score.
+#' @param type should the score be the \code{"sum"} or the \code{"mean"} of item responses?
+#' @param min.valid the minimum number of valid responses to receive a score. The default is 1, otherwise NA is returned.
 #'
 #' @return numeric vector
 #'
@@ -28,8 +28,7 @@
 #' mean.score <- scale_score(dfmiss, paste0("x", 1:4), type = "mean", min.valid = 3)
 #'
 #' @export
-scale_score <- function(data, items, type = c("sum", "mean"), min.valid = NULL){
-
+scale_score <- function(data, items = names(data) , type = c("sum", "mean"), min.valid = 1){
 
   if(type == "sum"){
     score <- rowSums(data[, items], na.rm = TRUE)
@@ -38,12 +37,7 @@ scale_score <- function(data, items, type = c("sum", "mean"), min.valid = NULL){
   }
 
   nacount <- rowSums(is.na(data[, items]), na.rm = TRUE)
-
-  if(!is.null(min.valid)){
-    score <- ifelse((length(items) - nacount) < min.valid, NA, score)
-  } else {
-    score <- ifelse(nacount == length(items), NA, score)
-  }
+  score <- ifelse((length(items) - nacount) < min.valid, NA, score)
 
   return(score)
 }

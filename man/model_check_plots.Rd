@@ -48,7 +48,7 @@ a Q-Q plot of the level 2 residuals (i.e., random intercept estimates).
 \examples{
 ## OLS
 data(sleepstudy, package = "lme4")
-lm.mod <- lm(Reaction ~ Days, data = sleepstudy)
+lm.mod <- stats::lm(Reaction ~ Days, data = sleepstudy)
 lm.plots <- model_check_plots(lm.mod, se = FALSE, color = "black")
 
 ## Two-level logistic regression
