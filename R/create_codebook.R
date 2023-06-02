@@ -15,7 +15,7 @@
 #' @export
 create_codebook <- function(data,
                             export.type = NULL, export.name = "MyCodebook",
-                            return.object = TRUE){
+                            return.object = FALSE){
 
   ## Extract Values and Labels
   ValueLabels <- get_labels(data)
