@@ -8,7 +8,7 @@ create_codebook(
   data,
   export.type = NULL,
   export.name = "MyCodebook",
-  return.object = TRUE
+  return.object = FALSE
 )
 }
 \arguments{
