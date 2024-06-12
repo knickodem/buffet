@@ -5,7 +5,7 @@
 #' @param data a \code{data.frame}
 #' @param items character vector of column names in \code{data} to use in the scale
 #' @param type should the score be the \code{"sum"} or the \code{"mean"} of item responses?
-#' @param min.valid the minimum number of valid responses to receive a score. The default is 1, otherwise NA is returned.
+#' @param min.valid the minimum number of valid responses to receive a score, otherwise NA is returned. The default is all \code{items}.
 #'
 #' @return numeric vector
 #'
@@ -28,7 +28,7 @@
 #' mean.score <- scale_score(dfmiss, paste0("x", 1:4), type = "mean", min.valid = 3)
 #'
 #' @export
-scale_score <- function(data, items = names(data) , type = c("sum", "mean"), min.valid = 1){
+scale_score <- function(data, items = names(data) , type = c("sum", "mean"), min.valid = length(items)){
 
   if(type == "sum"){
     score <- rowSums(data[, items], na.rm = TRUE)
