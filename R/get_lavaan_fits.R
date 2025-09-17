@@ -81,3 +81,18 @@ get_lavaan_fits <- function(object, measures = "scaled"){
   return(fits)
 }
 
+#### Gathers fit from multiple models into a single table and readies it for presentation ####
+## wrapper around get_lavaan_fits
+# mods.list - list of lavaan objects
+# type      - "scaled" or "robust"; passed to measures argument in get_lavaan_fits
+# digits    - number of digits to round numeric columns
+fits_wrapper <- function(mods.list, type = "scaled", digits = 2){
+
+  fit.tab <- purrr::map_dfr(mods.list, ~get_lavaan_fits(.x, measures = type), .id = "Model") %>%
+    rename_with(.cols = ends_with(paste0(".",type)), .fn = ~gsub(paste0("\\.", type), "", .)) %>%  # currently assumes .scaled stats are used
+    mutate(across(.cols = c(chisq, pvalue:srmr), .fn = ~format(round(., digits), nsmall = digits))) %>%
+    mutate(`90CI` = paste0("[", rmsea.ci.lower, ", ", rmsea.ci.upper, "]")) %>%
+    select(Model, n = ntotal, ngroups, x2 = chisq, df, p = pvalue, CFI = cfi, RMSEA = rmsea, `90CI`, SRMR = srmr)
+
+  return(fit.tab)
+}
