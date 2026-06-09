@@ -89,7 +89,7 @@ get_lavaan_fits <- function(object, measures = "scaled"){
 fits_wrapper <- function(mods.list, type = "scaled", digits = 2){
 
   fit.tab <- purrr::map_dfr(mods.list, ~get_lavaan_fits(.x, measures = type), .id = "Model") %>%
-    rename_with(.cols = ends_with(paste0(".",type)), .fn = ~gsub(paste0("\\.", type), "", .)) %>%  # currently assumes .scaled stats are used
+    rename_with(.cols = ends_with(paste0(".",type)), .fn = ~gsub(paste0("\\.", type), "", .)) %>%
     mutate(across(.cols = c(chisq, pvalue:srmr), .fn = ~format(round(., digits), nsmall = digits))) %>%
     mutate(`90CI` = paste0("[", rmsea.ci.lower, ", ", rmsea.ci.upper, "]")) %>%
     select(Model, n = ntotal, ngroups, x2 = chisq, df, p = pvalue, CFI = cfi, RMSEA = rmsea, `90CI`, SRMR = srmr)
