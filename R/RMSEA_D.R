@@ -6,8 +6,9 @@
 #'
 #' @param mod0 lavaan object for the less constrained model
 #' @param mod1 lavaan object for the more constrained model (i.e., mod1 is nested within mod0)
-#' @param cutoff The cutoff value for which to perform an equivalence test using the 90% confidence interval.
-#' When the upper bound of the 90% CI is below \code{cutoff} the null hypothesis that RMSEA_D > cutoff is statistically significant at alpha = .05
+#' @param cutoff The cutoff value for which to perform an equivalence test using
+#'  the 90% confidence interval. When the upper bound of the 90% CI is below
+#'  \code{cutoff} the null hypothesis that RMSEA_D > cutoff is statistically significant at alpha = .05
 
 
 RMSEA_D <- function(mod0, mod1, cutoff = .10){

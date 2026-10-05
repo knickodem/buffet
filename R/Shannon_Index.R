@@ -22,9 +22,9 @@
 #' Shannon_Index(tab)
 #'
 #' tab <- table(vec, useNA = "always")
-#' Shannon_Index(vec, useNA = "always")
+#' shannon_index(vec, useNA = "always")
 #'
-Shannon_Index <- function(x, base = exp(1), ...){
+shannon_index <- function(x, base = exp(1), ...){
 
   if(class(x) != "table"){
 

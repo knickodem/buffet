@@ -5,6 +5,9 @@ format_flex <- function(df, bold = FALSE, digits = 2, width = NULL){
     numericcols <- which(unlist(lapply(df, is.numeric)))
     ftab <- flextable(df)
     ftab <- colformat_double(ftab, j = numericcols, digits = digits)
+    # ftab <- set_formatter(ftab, values = function(x) sub("^(-?)0.", "\\1.", x))
+    # ftab <- set_formatter(ftab, df = function(x) sub("\\..*", "", x),
+    #                       diff.df = function(x) sub("\\..*", "", x))
   } else{
     ftab <- df
   }
